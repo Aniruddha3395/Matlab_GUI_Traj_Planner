@@ -11,6 +11,8 @@
 % NOTE 3: To change the initial robot base frame to part frame           %
 % transformation - Change the value of "rob_T_part" in 'robot_to_part.m' %
 % (or) change the correspondance points in 'robot_to_part.m'             %
+% NOTE 4: IF any changes are done in MEX files, then set "edited_MEX"    %
+% to be true                                                             %
 %                                                                        %
 %                                                                        %
 %                                                                        %
@@ -24,6 +26,8 @@ close all;
 warning off;
 format short;
 
+edited_MEX = false;
+
 %% adding woking directory and all dependancies
 [working_dir,~,~] = fileparts(mfilename('fullpath'));
 addpath(genpath(working_dir),'-end');
@@ -31,10 +35,10 @@ addpath(genpath(working_dir),'-end');
 %% Initializing MEX files for KUKA
 if ~ispc
 cd MEX_files/;
-if exist('bxbybz_to_euler_mex.mexa64','file')==0
+if exist('bxbybz_to_euler_mex.mexa64','file')==0 || edited_MEX
     run run_MEX.m;
 end
-if exist('apply_transformation_mex.mexa64','file')==0
+if exist('apply_transformation_mex.mexa64','file')==0 || edited_MEX
     run run_MEX.m;
 end
 cd ..;
@@ -43,17 +47,17 @@ end
 %% Initializing MEX files for KUKA
 cd iiwa/iiwa_FK_mex/;
 if ispc
-    if exist('get_iiwa_FK_all_joints_mex.mexw64','file')==0
+    if exist('get_iiwa_FK_all_joints_mex.mexw64','file')==0 || edited_MEX
         mex -R2018a get_iiwa_FK_all_joints_mex.cpp;
     end
-    if exist('get_iiwa_FK_mex.mexw64','file')==0
+    if exist('get_iiwa_FK_mex.mexw64','file')==0 || edited_MEX
         mex -R2018a get_iiwa_FK_mex.cpp;
     end
 else
-    if exist('get_iiwa_FK_all_joints_mex.mexa64','file')==0
+    if exist('get_iiwa_FK_all_joints_mex.mexa64','file')==0 || edited_MEX
         mex -R2018a get_iiwa_FK_all_joints_mex.cpp;
     end
-    if exist('get_iiwa_FK_mex.mexa64','file')==0
+    if exist('get_iiwa_FK_mex.mexa64','file')==0 || edited_MEX
         mex -R2018a get_iiwa_FK_mex.cpp;
     end
 end
@@ -125,7 +129,7 @@ close all;
 [mold_v_transformed,mold_n_transformed] = robot_to_part(mold_v,mold_n,[],[]);
 
 % Plotting the CAD part in Figure-1
-fig1 = figure;
+fig1 = figure();
 set(fig1,'units','normalized','outerpos',[0 0 1 1]);
 axis equal;
 addToolbarExplorationButtons(fig1);
@@ -151,6 +155,7 @@ camlight(0,0);
 hold on;
 camlight('right');
 hold on;
+material metal;
 
 %% Visualize robot with end effector
 
