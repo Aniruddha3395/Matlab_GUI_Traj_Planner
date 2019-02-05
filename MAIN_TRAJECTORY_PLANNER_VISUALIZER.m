@@ -126,9 +126,10 @@ close all;
 
 % Plotting the CAD part in Figure-1
 fig1 = figure;
-addToolbarExplorationButtons(fig1);
 set(fig1,'units','normalized','outerpos',[0 0 1 1]);
-set(fig1,'windowscrollWheelFcn','gcf');
+axis equal;
+addToolbarExplorationButtons(fig1);
+pause(0.1);
 show_origin();
 p_mold = patch('Faces',mold_f,'Vertices',mold_v_transformed,'FaceVertexCData',...
     [0.8,0.8,0.8],'FaceColor',[0.3,0.3,0.3],'EdgeColor','none');
@@ -140,7 +141,6 @@ ylabel('Y-Axis');
 zlabel('Z-Axis');
 daspect([1, 1, 1]);
 view([35,15]);
-rotate3d on;
 hold on;
 
 %% camera settings
