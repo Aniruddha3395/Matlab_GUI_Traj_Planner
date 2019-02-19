@@ -78,4 +78,3 @@ for new_seed_strt = 1:compute_traj_attempt_lim
         joint_config = -pi/2 + pi*rand(7,1);
     end
 end
-

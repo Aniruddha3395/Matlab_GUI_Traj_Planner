@@ -1,8 +1,0 @@
-1. check the joint angle change...its varying up and down...robot dancing ..stop that
-
-2. mex other matlab codes except gui codes
-
-3. add feature of selecting the robot 
-
-4. write the IK solver for other robot as well....basically change the current IK solver to take robot type as argument
-

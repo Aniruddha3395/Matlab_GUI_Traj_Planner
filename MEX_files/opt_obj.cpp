@@ -7,6 +7,7 @@
 #include "stdlib.h"
 #include "opt_obj.hpp"
 #include "iiwa_utilities.hpp"
+#include <algorithm>
 
 namespace opt_obj
 {
@@ -77,7 +78,7 @@ namespace opt_obj
         opt.set_lower_bounds(OptVarlb);
         opt.set_upper_bounds(OptVarub);
         opt.set_ftol_rel(1e-8);
-        // opt.set_maxeval(100);
+        opt.set_maxeval(1000);
         
         optx.resize(OptVarDim);
     }
@@ -103,7 +104,7 @@ namespace opt_obj
             transf_mat = FK_all.block(32,0,4,4)*robot_ree_T_tee;
         }   
 
-        // Error Function. Donot Change
+        // Error Function. Do not Change
         return cos(30*3.14159/180) - transf_mat(0,2)*point(0,9) - transf_mat(1,2)*point(0,10) - transf_mat(2,2)*point(0,11);
     };
 
@@ -128,6 +129,8 @@ namespace opt_obj
         double err_orient =  1 - (point(0,6)*transf_mat(0,1) + point(0,7)*transf_mat(1,1) + point(0,8)*transf_mat(2,1));
         double err_pose[3] = {point(0,0)-tool_xyz[0],point(0,1)-tool_xyz[1],point(0,2)-tool_xyz[2]};
         return 0.5*( 0.25*err_orient + err_pose[0]*err_pose[0] + err_pose[1]*err_pose[1] + err_pose[2]*err_pose[2]); 
+		// return 0.5*err_orient + 0.5*sqrt(err_pose[0]*err_pose[0] + err_pose[1]*err_pose[1] + err_pose[2]*err_pose[2]);
+		// return std::max(std::fabs(err_orient), std::fabs(sqrt(err_pose[0]*err_pose[0] + err_pose[1]*err_pose[1] + err_pose[2]*err_pose[2])));
     };
 
     bool opt_obj::solveOPT()
