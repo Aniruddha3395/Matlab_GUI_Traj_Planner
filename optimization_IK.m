@@ -40,10 +40,10 @@ for new_seed_strt = 1:compute_traj_attempt_lim
 %             tolerances,options, theta_lb, theta_ub );
         [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee);
         if status==1
-            fprintf('%d : success\n',target_idx);
+%             fprintf('%d : success\n',target_idx);
             reach = reach + 1;
         else
-            fprintf('%d : failure\n',target_idx);
+%             fprintf('%d : failure\n',target_idx);
             failed_idx = [failed_idx;target_idx];
             if size(failed_idx,1)>lim_on_failure
                 break;

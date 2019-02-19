@@ -21,6 +21,8 @@ global close_win;
 global replica_count;
 global replica_off;
 global select_tool;
+global repl_path_l;
+global repl_path_r;
 
 % Title
 titlebx = uicontrol(fig,'Style','text');

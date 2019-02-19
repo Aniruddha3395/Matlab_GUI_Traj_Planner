@@ -11,6 +11,16 @@ global cl_failed_traj;
 global move_rob_all;
 global msgbx;
 global prev_traj_status;
+global select_part;
+global select_tool;
+global move_part_x;
+global move_part_y;
+global move_part_z;
+global move_part_Rz;
+global move_part_Ry;
+global move_part_Rx;
+global repl_path_l;
+global repl_path_r;
 
 if take_video
     vid = VideoWriter('video1.mp4');
@@ -25,6 +35,17 @@ if ~isempty(joint_angles)
     cl_data.Enable = 'off';
     cl_failed_traj.Enable = 'off';
     move_rob_all.Enable = 'off';
+    select_part.Enable = 'off';
+    select_tool.Enable = 'off';
+    move_part_x.Enable = 'off';
+    move_part_y.Enable = 'off';
+    move_part_z.Enable = 'off';
+    move_part_Rz.Enable = 'off';
+    move_part_Ry.Enable = 'off';
+    move_part_Rx.Enable = 'off';
+    repl_path_l.Enable = 'off';
+    repl_path_r.Enable = 'off';
+    
     for i= 1:size(joint_angles,1)
         if kill_sig
             kill_sig=false;
@@ -94,5 +115,15 @@ cl_last_data.Enable = 'on';
 cl_data.Enable = 'on';
 cl_failed_traj.Enable = 'on';
 move_rob_all.Enable = 'on';
+select_part.Enable = 'on';
+select_tool.Enable = 'on';
+move_part_x.Enable = 'on';
+move_part_y.Enable = 'on';
+move_part_z.Enable = 'on';
+move_part_Rz.Enable = 'on';
+move_part_Ry.Enable = 'on';
+move_part_Rx.Enable = 'on';   
+repl_path_l.Enable = 'on';
+repl_path_r.Enable = 'on';    
 msgbx.String = temp_msgstring;
 end

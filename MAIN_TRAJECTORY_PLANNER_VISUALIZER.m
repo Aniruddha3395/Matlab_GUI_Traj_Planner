@@ -6,8 +6,8 @@
 %                                                                        %
 % NOTE 1: When running the code from different path...just               %
 % change the folder                                                      %
-% NOTE 2: To change the tool TCP - change the "robot_ree_T_tee" value    %
-% at the end of current script                                           %
+% NOTE 2: Whenever new tool is added, add the tool data at               % 
+% the end of this script                                                 %
 % NOTE 3: To change the initial robot base frame to part frame           %
 % transformation - Change the value of "rob_T_part" in 'robot_to_part.m' %
 % (or) change the correspondance points in 'robot_to_part.m'             %
@@ -88,6 +88,7 @@ global p_tool;
 global lim_on_failure;
 global FK_T;
 global robot1;
+global tool1;
 
 roller_width = 24;
 resolution = 3;
@@ -110,7 +111,7 @@ end
 cd ../Tools/;
 dir_list_struct = dir;
 dir_list_cell = struct2cell(dir_list_struct);
-store_file_tool_str ={};
+store_file_tool_str ={'NO_TOOL'};
 pattern = {'.STL','.stl'};
 for i = 1:size(dir_list_cell,2)
     if contains(dir_list_cell{1,i},pattern)
@@ -119,13 +120,22 @@ for i = 1:size(dir_list_cell,2)
 end
 cd ../..;
 mold_base = strcat('CAD_stl/Molds/',store_file_str{1});
-ee_tool = strcat('CAD_stl/Tools/',store_file_tool_str{1});
+
+if ~strcmp(store_file_tool_str{1},'NO_TOOL')
+    ee_tool = strcat('CAD_stl/Tools/',store_file_tool_str{1});
+else
+    show_tool = false;
+end
 
 %STLREAD is a function obtaiend from matlab exchange. Refer to the file for
 %more details.
 [mold_v, mold_f, mold_n, ~] = stlRead(mold_base);
+
+if ~strcmp(store_file_tool_str{1},'NO_TOOL')
 [tool_v, tool_f, tool_n, ~] = stlRead(ee_tool);
 delete(gca);
+end
+
 close all;
 
 % transforming part w.r.t. robot base
@@ -176,7 +186,7 @@ material metal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % getting data from .mat file is faster
-load STL_DATA_mm.mat;
+load STL_iiwa7_DATA_mm.mat;
 home_pos = [-0.1321;0.1415;0.0895;-1.5916;-0.0033;1.4041;-0.0312];    %some home position
 FK_T = get_iiwa_FK_all_joints_mex(home_pos,eye(4));
 FK_T(1:3,4) = FK_T(1:3,4).*1000;
@@ -239,15 +249,52 @@ if show_tool
         [0.8,0.8,0.8],'FaceColor',[0.1,0.1,0.1],'EdgeColor','none','FaceAlpha',1);
     set(p_tool,'parent', h_tool);
     set(h_tool, 'matrix', FK_T(33:36,:));
+else
+    hold on;
+    h_tool = hgtransform;
+    p_tool = patch();
+    set(p_tool,'parent', h_tool);
+    set(h_tool, 'matrix', FK_T(33:36,:));
 end
 
 %% Initialize tcp and robot base
 % robot base
 robot1_base = eye(4);
 
-% Tool to Robot transformation
-robot1.robot_ree_T_tee = eye(4);
-robot1.robot_ree_T_tee(1:3,4) = [-0.0494; 0; 0.1335]; % For Roller
+%% Initialize tool data
+
+% Tool to Robot End Effector transformation
+tool1 = containers.Map('KeyType','char','ValueType','any');
+tool1('NO_TOOL') = eye(4);
+%tool data for roller
+t = eye(4);
+t(1:3,4) = [-0.0494; 0; 0.1335];
+tool1('Roller.STL') = t;
+%tool data for sander
+t = eye(4);
+t(1:3,4) = [0; 0; 0.1383];
+tool1('Sander.STL') = t;
+%tool data for probe
+t = eye(4);
+t(1:3,4) = [0; 0; 0.0968];
+tool1('Probe.STL') = t;
+%tool data for calibration tool
+t = eye(4);
+t(1:3,4) = [0; 0; 0.0478];
+tool1('Calib_Tool.STL') = t;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                       %
+% add the new tool data as following -                                  %
+% tool1('TOOL_NAME') = transformation matrix;                           %
+%                                                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+robot1.robot_ree_T_tee = tool1('NO_TOOL');
 
 %% Run the GUI for trajectory selection
 run traj_selection_GUI.m;
