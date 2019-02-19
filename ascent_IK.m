@@ -8,7 +8,11 @@ global robot1;
     options);
 
 % Verify the Solution
-ee_base_all = get_iiwa_FK_all_joints_mex( joints,eye(4) );
+if strcmp(robot1.rob_type,'iiwa7')
+    ee_base_all = get_iiwa7_FK_all_joints_mex( joints,eye(4) );
+elseif strcmp(robot1.rob_type,'iiwa14')
+    ee_base_all = get_iiwa14_FK_all_joints_mex( joints,eye(4) );
+end
 ee_base = ee_base_all(33:36,:) * robot1.robot_ree_T_tee;
 
 % Error Position

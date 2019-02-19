@@ -38,7 +38,12 @@ for new_seed_strt = 1:compute_traj_attempt_lim
         %compute IK for each point
 %         [joint_config,status] = ascent_IK( joint_config,xyz_bxbybz(target_idx,:),...
 %             tolerances,options, theta_lb, theta_ub );
-        [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee);
+        if strcmp(robot1.rob_type,'iiwa7') 
+            [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,7);
+        elseif strcmp(robot1.rob_type,'iiwa14') 
+            [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,14);
+        end
+        
         if status==1
 %             fprintf('%d : success\n',target_idx);
             reach = reach + 1;

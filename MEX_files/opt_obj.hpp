@@ -13,7 +13,7 @@ namespace opt_obj
 
         public:
             // constructor and distructor
-            opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, std::vector<double> _X_init, double OptH, double OptXtolRel);
+            opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, std::vector<double> _X_init, double OptH, double OptXtolRel, int Rob_version);
 
             ~opt_obj();
 
@@ -30,6 +30,7 @@ namespace opt_obj
             double optXtolRel;
             double optH;
             int status;
+            int rob_version;
             double tolerance[4];
             std::vector<double> optx;
             std::vector<double> solx;

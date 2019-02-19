@@ -9,8 +9,12 @@ if ~isempty(points)
     for i=1:size(points,1)
         if i~=size(points,1)
             direction = points(i+1,:) - points(i,:);
-            %         direction = [0 1 0];
+            %         direction = [-1 0 0];
             dir_vec = -direction / norm(direction);   %unit direction vector
+        end
+        if i==1 && size(points,1)==1
+            direction = [-1 0 0];
+            dir_vec = -direction / norm(direction);
         end
         tool_z = -normals(i,:);
         tool_y = cross(tool_z,dir_vec);

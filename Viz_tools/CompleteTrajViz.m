@@ -22,6 +22,8 @@ global move_part_Ry;
 global move_part_Rx;
 global repl_path_l;
 global repl_path_r;
+global robot1;
+global select_robot;
 
 if take_video
     vid = VideoWriter('video1.mp4');
@@ -36,6 +38,7 @@ if ~isempty(joint_angles_group)
     cl_data.Enable = 'off';
     cl_failed_traj.Enable = 'off';
     move_rob.Enable = 'off';
+    select_robot.Enable = 'off';
     select_part.Enable = 'off';
     select_tool.Enable = 'off';
     move_part_x.Enable = 'off';
@@ -53,7 +56,12 @@ if ~isempty(joint_angles_group)
             msgbx.String = temp_msgstring;
             break;
         end
-        FK_T = get_iiwa_FK_all_joints_mex(joint_angles_group(i,:),eye(4));
+        if strcmp(robot1.rob_type,'iiwa7') 
+            FK_T = get_iiwa7_FK_all_joints_mex(joint_angles_group(i,:),eye(4));
+        elseif strcmp(robot1.rob_type,'iiwa14') 
+            FK_T = get_iiwa14_FK_all_joints_mex(joint_angles_group(i,:),eye(4));
+        end
+        
         FK_T(1:3,4) = FK_T(1:3,4).*1000;
         FK_T(5:7,4) = FK_T(5:7,4).*1000;
         FK_T(9:11,4) = FK_T(9:11,4).*1000;
@@ -88,7 +96,11 @@ else
 end
 
 %move back to home position
-FK_T = get_iiwa_FK_all_joints_mex(home_pos,eye(4));
+if strcmp(robot1.rob_type,'iiwa7') 
+    FK_T = get_iiwa7_FK_all_joints_mex(home_pos,eye(4));
+elseif strcmp(robot1.rob_type,'iiwa14') 
+    FK_T = get_iiwa14_FK_all_joints_mex(home_pos,eye(4));
+end
 FK_T(1:3,4) = FK_T(1:3,4).*1000;
 FK_T(5:7,4) = FK_T(5:7,4).*1000;
 FK_T(9:11,4) = FK_T(9:11,4).*1000;
@@ -116,6 +128,7 @@ cl_last_data.Enable = 'on';
 cl_data.Enable = 'on';
 cl_failed_traj.Enable = 'on';
 move_rob.Enable = 'on';
+select_robot.Enable = 'on';
 select_part.Enable = 'on';
 select_tool.Enable = 'on';
 move_part_x.Enable = 'on';

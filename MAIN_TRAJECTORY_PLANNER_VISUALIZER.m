@@ -47,31 +47,13 @@ end
 cd ..;
 end
 
-%% Initializing MEX files for KUKA
-cd iiwa/iiwa_FK_mex/;
-if ispc
-    if exist('get_iiwa_FK_all_joints_mex.mexw64','file')==0 || edited_MEX
-        mex -R2018a get_iiwa_FK_all_joints_mex.cpp;
-    end
-    if exist('get_iiwa_FK_mex.mexw64','file')==0 || edited_MEX
-        mex -R2018a get_iiwa_FK_mex.cpp;
-    end
-else
-    if exist('get_iiwa_FK_all_joints_mex.mexa64','file')==0 || edited_MEX
-        mex -R2018a get_iiwa_FK_all_joints_mex.cpp;
-    end
-    if exist('get_iiwa_FK_mex.mexa64','file')==0 || edited_MEX
-        mex -R2018a get_iiwa_FK_mex.cpp;
-    end
-end
-cd ../..;
-
 %% Define gloabl variables and figure settings
 
 set(0, 'DefaultFigureRenderer', 'opengl');
 global roller_width;
 global resolution;
 global h0 h1 h2 h3 h4 h5 h6 h7 h_tool;
+global p0 p1 p2 p3 p4 p5 p6 p7;
 global take_video;
 global show_tool;
 global home_pos;
@@ -186,9 +168,19 @@ material metal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % getting data from .mat file is faster
-load STL_iiwa7_DATA_mm.mat;
+robot1.rob_type = 'iiwa7';
+if strcmp(robot1.rob_type,'iiwa7')
+    load STL_iiwa7_DATA_mm.mat;
+else
+    load STL_iiwa14_DATA_mm.mat;
+end    
+
 home_pos = [-0.1321;0.1415;0.0895;-1.5916;-0.0033;1.4041;-0.0312];    %some home position
-FK_T = get_iiwa_FK_all_joints_mex(home_pos,eye(4));
+if strcmp(robot1.rob_type,'iiwa7')
+    FK_T = get_iiwa7_FK_all_joints_mex(home_pos,eye(4));
+elseif strcmp(robot1.rob_type,'iiwa14')
+    FK_T = get_iiwa14_FK_all_joints_mex(home_pos,eye(4));
+end
 FK_T(1:3,4) = FK_T(1:3,4).*1000;
 FK_T(5:7,4) = FK_T(5:7,4).*1000;
 FK_T(9:11,4) = FK_T(9:11,4).*1000;

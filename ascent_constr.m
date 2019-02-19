@@ -6,7 +6,11 @@ c = [];
 ceq = [];
 
 % ROBOT end-effector
-FK_all = get_iiwa_FK_all_joints_mex( theta,eye(4) );
+if strcmp(robot1.rob_type,'iiwa7')
+    FK_all = get_iiwa7_FK_all_joints_mex( theta,eye(4) );
+elseif strcmp(robot1.rob_type,'iiwa14')
+    FK_all = get_iiwa14_FK_all_joints_mex( theta,eye(4) );
+end
 ee_base = FK_all(33:36,:);
 transf_mat = ee_base * robot1.robot_ree_T_tee; % For attaching tool
 

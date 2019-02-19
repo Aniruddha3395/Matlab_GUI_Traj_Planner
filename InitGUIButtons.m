@@ -23,6 +23,7 @@ global replica_off;
 global select_tool;
 global repl_path_l;
 global repl_path_r;
+global select_robot;
 
 % Title
 titlebx = uicontrol(fig,'Style','text');
@@ -130,16 +131,33 @@ write_file.ForegroundColor = [0.1,0,0.3];
 write_file.FontSize = 13;
 write_file.Callback = @WriteDataToFile;
 
+% Select robot text
+select_rob_bx = uicontrol(fig,'Style','text');
+select_rob_bx.Position = [1490 920 250 25];
+select_rob_bx.String = 'Select Robot';
+select_rob_bx.FontWeight = 'bold';
+select_rob_bx.FontSize = 13;
+
+% Select robot Button
+select_robot = uicontrol(fig,'Style','popupmenu');
+select_robot.Position = [1560 870 250 50];
+select_robot.String = {'LBR_iiwa7','LBR_iiwa14'};
+select_robot.FontWeight = 'bold';
+select_robot.BackgroundColor = [1,1,0.9];
+select_robot.ForegroundColor = [0.1,0,0.3];
+select_robot.FontSize = 13;
+select_robot.Callback = @SelectRobot;
+
 % Select part text
 select_part_bx = uicontrol(fig,'Style','text');
-select_part_bx.Position = [1490 900 250 25];
+select_part_bx.Position = [1490 850 250 25];
 select_part_bx.String = 'Select Mold';
 select_part_bx.FontWeight = 'bold';
 select_part_bx.FontSize = 13;
 
 % Select part Button
 select_part = uicontrol(fig,'Style','popupmenu');
-select_part.Position = [1560 850 250 50];
+select_part.Position = [1560 800 250 50];
 select_part.String = store_file_str;
 select_part.FontWeight = 'bold';
 select_part.BackgroundColor = [1,1,0.9];
@@ -149,14 +167,14 @@ select_part.Callback = @SelectPart;
 
 % Select part text
 select_tool_bx = uicontrol(fig,'Style','text');
-select_tool_bx.Position = [1490 830 250 25];
+select_tool_bx.Position = [1490 780 250 25];
 select_tool_bx.String = 'Select Tool';
 select_tool_bx.FontWeight = 'bold';
 select_tool_bx.FontSize = 13;
 
 % Select part Button
 select_tool = uicontrol(fig,'Style','popupmenu');
-select_tool.Position = [1560 780 250 50];
+select_tool.Position = [1560 730 250 50];
 select_tool.String = store_file_tool_str;
 select_tool.FontWeight = 'bold';
 select_tool.BackgroundColor = [1,1,0.9];

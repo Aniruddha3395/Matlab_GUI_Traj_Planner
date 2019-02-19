@@ -30,7 +30,7 @@ namespace opt_obj
     }
 
     // class constructor
-    opt_obj::opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, std::vector<double> _X_init, double OptH, double OptXtolRel) 
+    opt_obj::opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, std::vector<double> _X_init, double OptH, double OptXtolRel, int Rob_version) 
     {
         //choose optimizer
         // alg_type = nlopt::LN_NEWUOA;
@@ -46,6 +46,7 @@ namespace opt_obj
         theta = Theta;
         point = Point;
         robot_ree_T_tee = Robot_ree_T_tee;
+        rob_version = Rob_version;
         tolerance[0] = 0.003;
         tolerance[1] = 0.0524;
         tolerance[2] = 0.0524;
@@ -90,8 +91,17 @@ namespace opt_obj
     {
         // ROBOT end-effector
         Eigen::MatrixXd rob_base_T = Eigen::MatrixXd::Identity(4,4);
-        Eigen::MatrixXd FK_all = iiwa::compute_iiwa7_FK_all(x,rob_base_T);
-        Eigen::Matrix4d transf_mat = FK_all.block(32,0,4,4)*robot_ree_T_tee;
+        Eigen::Matrix4d transf_mat;
+        if (rob_version==7)
+        {
+            Eigen::MatrixXd FK_all = iiwa::compute_iiwa7_FK_all(x,rob_base_T);
+            transf_mat = FK_all.block(32,0,4,4)*robot_ree_T_tee;
+        }
+        else if (rob_version==14)
+        {
+            Eigen::MatrixXd FK_all = iiwa::compute_iiwa14_FK_all(x,rob_base_T);
+            transf_mat = FK_all.block(32,0,4,4)*robot_ree_T_tee;
+        }   
 
         // Error Function. Donot Change
         return cos(30*3.14159/180) - transf_mat(0,2)*point(0,9) - transf_mat(1,2)*point(0,10) - transf_mat(2,2)*point(0,11);
@@ -101,8 +111,17 @@ namespace opt_obj
     {
         // ROBOT end-effector
         Eigen::MatrixXd rob_base_T = Eigen::MatrixXd::Identity(4,4);
-        Eigen::MatrixXd ee_base_all = iiwa::compute_iiwa7_FK_all(x,rob_base_T);
-        Eigen::Matrix4d transf_mat = ee_base_all.block(32,0,4,4)*robot_ree_T_tee;
+        Eigen::Matrix4d transf_mat;
+        if (rob_version==7)
+        {
+            Eigen::MatrixXd ee_base_all = iiwa::compute_iiwa7_FK_all(x,rob_base_T);
+            transf_mat = ee_base_all.block(32,0,4,4)*robot_ree_T_tee;
+        }
+        else if (rob_version==14)
+        {
+            Eigen::MatrixXd ee_base_all = iiwa::compute_iiwa14_FK_all(x,rob_base_T);
+            transf_mat = ee_base_all.block(32,0,4,4)*robot_ree_T_tee;
+        }
         double tool_xyz[3] = {transf_mat(0,3),transf_mat(1,3),transf_mat(2,3)};
 
         // Error Function. Donot Change
@@ -152,9 +171,18 @@ namespace opt_obj
             theta(5,0) = solx[5];
             theta(6,0) = solx[6];
             Eigen::MatrixXd rob_base_T = Eigen::MatrixXd::Identity(4,4);
-            Eigen::MatrixXd ee_base_all = iiwa::compute_iiwa7_FK(theta,rob_base_T);
-            Eigen::MatrixXd transf_mat = ee_base_all*robot_ree_T_tee;
-
+            Eigen::MatrixXd transf_mat;
+            if (rob_version==7)
+            {
+                Eigen::MatrixXd ee_base_all = iiwa::compute_iiwa7_FK_all(theta,rob_base_T);
+                transf_mat = ee_base_all.block(32,0,4,4)*robot_ree_T_tee;
+            }
+            else if (rob_version==14)
+            {
+                Eigen::MatrixXd ee_base_all = iiwa::compute_iiwa14_FK_all(theta,rob_base_T);   
+                transf_mat = ee_base_all.block(32,0,4,4)*robot_ree_T_tee;
+            }
+            
             // Error Position
             double err_xyz = sqrt((point(0,0)-transf_mat(0,3))*(point(0,0)-transf_mat(0,3)) + (point(0,1)-transf_mat(1,3))*(point(0,1)-transf_mat(1,3)) + (point(0,2)-transf_mat(2,3))*(point(0,2)-transf_mat(2,3)));
 
