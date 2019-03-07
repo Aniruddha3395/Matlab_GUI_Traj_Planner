@@ -10,6 +10,7 @@ end_idx = range(1,2);
 by = [];
 bz = [];
 bx = [];
+
 for j=strt_idx:end_idx
     if (j~=end_idx)
         direction = points(j+1,:) - points(j,:);

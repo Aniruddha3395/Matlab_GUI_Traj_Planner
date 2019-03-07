@@ -1,11 +1,14 @@
 clc;
-clear;
+clear all;
 close all;
 
+global robot1;
 %test single IK for 1000 points
 
-sample_count = 1000;
+robot1.robot_ree_T_tee = eye(4);
+sample_count = 50;
 success_count = 0;
+robot1.rob_type = 'iiwa7';
 for i=1:sample_count
     
     input_joint_config = zeros(7,1);
@@ -16,7 +19,15 @@ for i=1:sample_count
     input_joint_config(5) = (-168*pi/180) + (2*168*pi*rand(1,1)/180);
     input_joint_config(6) = (-118*pi/180) + (2*118*pi*rand(1,1)/180);
     input_joint_config(7) = (-173*pi/180) + (2*173*pi*rand(1,1)/180);
-    T = get_iiwa_FK_mex(input_joint_config,eye(4));
+    if strcmp(robot1.rob_type,'iiwa7')
+        T = get_iiwa7_FK_all_joints_mex(input_joint_config,eye(4));
+    elseif strcmp(robot1.rob_type,'iiwa14')
+        T = get_iiwa14_FK_all_joints_mex(input_joint_config,eye(4));
+    else
+        disp('choose correct robot...');
+        return;
+    end
+    T = T(33:36,:);
     [bx,by,bz] = euler_to_bxbybz(rotm2eul(T(1:3,1:3)));
     xyzbxbybz = [T(1,4),T(2,4),T(3,4),bx,by,bz];
     
@@ -64,6 +75,7 @@ for i=1:sample_count
     
     [joint_config,status] = ascent_IK( joint_config,xyzbxbybz,...
         tolerances,options, theta_lb, theta_ub );
+
     if status==1
         fprintf('%d = success\n',i);
         success_count = success_count +1;

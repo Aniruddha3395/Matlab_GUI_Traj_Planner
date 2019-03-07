@@ -6,11 +6,9 @@ warning off;
 global robot1;
 global lim_on_failure;
 
-% xyz_bxbybz = dlmread('xyz_bxbybz_wrt_part.csv');
-% group_idx = dlmread('group_idx');
-xyz_bxbybz = dlmread('case_planner_pts.csv');
+xyz_bxbybz = dlmread('data_files/xyz_bxbybz.csv');
 xyz_bxbybz(:,3) = xyz_bxbybz(:,3)+ 46.736;
-group_idx = dlmread('case_planner_grps.csv');
+group_idx = dlmread('data_files/groups_Idx.csv');
 
 %% Initialize robot and tool
 % robot base
@@ -31,7 +29,7 @@ tolerances(4) = 1;
 lim_on_failure = 10;
 
 %% visualize kuka
-mold_base = strcat('CAD_stl/Composite_Mold.STL');
+mold_base = strcat('CAD_stl/Molds/Composite_Mold.STL');
 
 %tool info
 ee_tool = 'roller';
@@ -73,22 +71,6 @@ camlight('right');
 hold on;
 
 %% Visualize robot with end effector
-
-% NOTE:
-%%%%%%%%%%         <<<<< KUKA visualizer >>>>>         %%%%%%%%%%
-
-% NOTE: UNCOMMENT THIS ONLY WHEN YOU WANT TO VISUALIZE DATA FROM STL FILES
-% [Link0_v, Link0_f, Link0_n, ~] = stlRead('Link0.STL');
-% [Link1_v, Link1_f, Link1_n, ~] = stlRead('Link1.STL');
-% [Link2_v, Link2_f, Link2_n, ~] = stlRead('Link2.STL');
-% [Link3_v, Link3_f, Link3_n, ~] = stlRead('Link3.STL');
-% [Link4_v, Link4_f, Link4_n, ~] = stlRead('Link4.STL');
-% [Link5_v, Link5_f, Link5_n, ~] = stlRead('Link5.STL');
-% [Link6_v, Link6_f, Link6_n, ~] = stlRead('Link6.STL');
-% [Link7_v, Link7_f, Link7_n, ~] = stlRead('Link7.STL');
-% [tool_v, tool_f, tool_n, ~] = stlRead('Concave_Dome.STL');
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % getting data from .mat file is faster
 load STL_DATA_mm.mat;
@@ -186,7 +168,7 @@ options.MaxIterations = 2000;
 options.MaxFunctionEvaluations = 1e10;
 options.OptimalityTolerance = 1e-18;
 options.StepTolerance = 1e-10;
-options.ConstraintTolerance = 1e-200;
+options.ConstraintTolerance = 1e-20;
 % options.Display = 'iter';
 options.Display = 'none';
 options.SpecifyObjectiveGradient = false;
@@ -220,9 +202,15 @@ for i = 1:size(group_idx,1)
         failed_idx = [];
         for  target_idx= 1:size(xyz_bxbybz_T,1)
             %compute IK for each point
-            [joint_config,status] = ascent_IK( joint_config,xyz_bxbybz_T(target_idx,:),...
-                tolerances,options, theta_lb, theta_ub );
-            if status
+            tic;
+%             [joint_config,status] = ascent_IK( joint_config,xyz_bxbybz_T(target_idx,:),...
+%                 tolerances,options, theta_lb, theta_ub );
+            [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz_T(target_idx,:),robot1.robot_ree_T_tee);
+            
+            toc;
+%             joint_config
+
+            if status == 1
 %                 fprintf('%d : success..\n',target_idx);
                 reach = reach + 1;
             else
@@ -271,7 +259,7 @@ for i = 1:size(group_idx,1)
         disp([range(2)-range(1)+1,size(joint_angles,1)]);
         idx = idx + 1;
         hold on;
-            plot3(xyz_bxbybz_T(1:3,1),xyz_bxbybz_T(1:3,2),xyz_bxbybz_T(1:3,3),'g','LineWidth',5); %Plot the Points
+            plot3(xyz_bxbybz_T(:,1).*1000,xyz_bxbybz_T(:,2).*1000,xyz_bxbybz_T(:,3).*1000,'g','LineWidth',5); %Plot the Points
         %     plot_traj_arr = [plot_traj_arr;plot_traj];
         %     prev_traj_status = 'LAST TRAJECTORY SUCCESSFUL...';
         %     last_success_joint_angles = joint_angles;
@@ -282,7 +270,7 @@ for i = 1:size(group_idx,1)
         disp('failure');
         hold on;
         %     joint_angles = last_success_joint_angles;
-            plot3(xyz_bxbybz_T(1:3,1),xyz_bxbybz_T(1:3,2),xyz_bxbybz_T(1:3,3),'r','LineWidth',5); %Plot the failed traj's unsuccessful Points
+            plot3(xyz_bxbybz_T(:,1).*1000,xyz_bxbybz_T(:,2).*1000,xyz_bxbybz_T(:,3).*1000,'r','LineWidth',5); %Plot the failed traj's unsuccessful Points
         %     plot_failed_traj_arr = [plot_failed_traj_arr;plot_failed_traj];
         %     prev_traj_status = 'LAST TRAJECTORY FAILED...';
         %     offset_fail_counter = offset_fail_counter + 1;

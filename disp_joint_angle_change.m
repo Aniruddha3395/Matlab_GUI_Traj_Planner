@@ -1,7 +1,8 @@
 %% plot joint angles change
 
-function disp_joint_angle_change(joint_angles)
+function disp_joint_angle_change()
 
+joint_angles = dlmread('data_files/joint_angles.csv');
 figure;
 subplot(4,2,1);
 plot(1:size(joint_angles,1),joint_angles(:,1)*180/pi);
@@ -38,5 +39,4 @@ plot(1:size(joint_angles,1),joint_angles(:,7)*180/pi);
 hold on;
 scatter(1:size(joint_angles,1),joint_angles(:,7)*180/pi,'filled');
 title('joint 7');
-
 end
