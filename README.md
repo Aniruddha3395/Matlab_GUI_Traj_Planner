@@ -11,6 +11,7 @@
 * If using MEX based optimization, then nlopt library is required [Link](https://nlopt.readthedocs.io/en/latest/)
 
 **To run the Code**
+
 run MAIN_TRAJECTORY_PLANNER_VISUALIZER.m
 
 **NOTE**
