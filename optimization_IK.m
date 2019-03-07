@@ -2,6 +2,7 @@
 
 global lim_on_failure;
 global robot1;
+global use_cpp_IK_solver;
 
 theta_th(1) = -168*pi/180; %true angle : 170
 theta_th(2) = -118*pi/180; %true angle : 120
@@ -36,19 +37,22 @@ for new_seed_strt = 1:compute_traj_attempt_lim
     failed_idx = [];
     for  target_idx= 1:size(xyz_bxbybz,1)
         %compute IK for each point
-%         [joint_config,status] = ascent_IK( joint_config,xyz_bxbybz(target_idx,:),...
-%             tolerances,options, theta_lb, theta_ub );
-        if strcmp(robot1.rob_type,'iiwa7') 
-            [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,7);
-        elseif strcmp(robot1.rob_type,'iiwa14') 
-            [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,14);
+        if ~use_cpp_IK_solver
+            [joint_config,status] = ascent_IK( joint_config,xyz_bxbybz(target_idx,:),...
+                tolerances,options, theta_lb, theta_ub );
+        else
+            if strcmp(robot1.rob_type,'iiwa7')
+                [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,7);
+            elseif strcmp(robot1.rob_type,'iiwa14')
+                [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,14);
+            end
         end
         
         if status==1
-%             fprintf('%d : success\n',target_idx);
+            %             fprintf('%d : success\n',target_idx);
             reach = reach + 1;
         else
-%             fprintf('%d : failure\n',target_idx);
+            %             fprintf('%d : failure\n',target_idx);
             failed_idx = [failed_idx;target_idx];
             if size(failed_idx,1)>lim_on_failure
                 break;
@@ -70,11 +74,11 @@ for new_seed_strt = 1:compute_traj_attempt_lim
     end
     
     if size(xyz_bxbybz,1)-reach<lim_on_failure
-%         fprintf('\n Solution verified \n');
+        %         fprintf('\n Solution verified \n');
         traj_successful = true;
         break;
     else
-%         fprintf('\n Solution does not exist...trying again \n');
+        %         fprintf('\n Solution does not exist...trying again \n');
         joint_config = -pi/2 + pi*rand(7,1);
     end
 end

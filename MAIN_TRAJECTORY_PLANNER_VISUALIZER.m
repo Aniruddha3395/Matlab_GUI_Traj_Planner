@@ -3,7 +3,7 @@
 %                                                                        %
 %                                                                        %
 %                                                                        %
-%                                                                        %
+% << Trajectory Planner GUI using Optimization based approach >>         %
 % NOTE 1: When running the code from different path...just               %
 % change the folder                                                      %
 % NOTE 2: Whenever new tool is added, add the tool data at               % 
@@ -71,6 +71,7 @@ global lim_on_failure;
 global FK_T;
 global robot1;
 global tool1;
+global use_cpp_IK_solver;
 
 roller_width = 24;
 resolution = 3;
@@ -78,6 +79,9 @@ take_video = false;
 show_tool = true;
 kill_sig = false;
 lim_on_failure = 1;
+%<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
+use_cpp_IK_solver = true;       
+%<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
 
 %% Load Mold, Tool and relative information
 cd CAD_stl/Molds/;
@@ -126,9 +130,13 @@ close all;
 % Plotting the CAD part in Figure-1
 fig1 = figure();
 set(fig1,'units','normalized','outerpos',[0 0 1 1]);
+% axis off;
 axis equal;
 addToolbarExplorationButtons(fig1);
 pause(0.1);
+% set(gcf,'color','w');
+set(gca,'color',[0.9400 0.9400 0.9400]);
+
 show_origin();
 p_mold = patch('Faces',mold_f,'Vertices',mold_v_transformed,'FaceVertexCData',...
     [0.8,0.8,0.8],'FaceColor',[0.3,0.3,0.3],'EdgeColor','none');
@@ -262,6 +270,11 @@ tool1('NO_TOOL') = eye(4);
 t = eye(4);
 t(1:3,4) = [-0.0494; 0; 0.1335];
 tool1('Roller.STL') = t;
+%tool data for roller2
+t = eye(4);
+t(1:3,4) = [-0.0494; 0; 0.152];
+t(1:3,1:3) = eul2rotm([0.1,0,0]);
+tool1('Roller2.STL') = t;
 %tool data for sander
 t = eye(4);
 t(1:3,4) = [0; 0; 0.1383];
@@ -284,7 +297,16 @@ tool1('Calib_Tool.STL') = t;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+% ensuring new tools are added with respective TCP
+for file_idx = 1:size(store_file_tool_str,2)
+try
+     tool1(store_file_tool_str{file_idx});
+catch
+    disp('TCP is not available for the following tool - ');
+    disp(store_file_tool_str{file_idx});
+    return;
+end
+end
 
 robot1.robot_ree_T_tee = tool1('NO_TOOL');
 
