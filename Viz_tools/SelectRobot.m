@@ -5,20 +5,13 @@ global home_pos;
 global FK_T;
 global h0 h1 h2 h3 h4 h5 h6 h7;
 global p0 p1 p2 p3 p4 p5 p6 p7;
-global joint_angles;
-global joint_angles_group;
-global xyz_bxbybz_groups;
-global group_idx;
-global idx;
-global plot_traj_arr;
-global plot_failed_traj_arr;
 global prev_traj_status;
 global h_tool;
 
 if hObject.Value==1
     if ~strcmp(robot1.rob_type,'iiwa7')
         robot1.rob_type='iiwa7';
-        load STL_iiwa7_DATA_mm.mat;
+        load('STL_iiwa7_DATA_mm.mat');
         FK_T = get_iiwa7_FK_all_joints_mex(home_pos,eye(4));
         FK_T(1:3,4) = FK_T(1:3,4).*1000;
         FK_T(5:7,4) = FK_T(5:7,4).*1000;
@@ -71,13 +64,7 @@ if hObject.Value==1
         set(h6,'matrix',FK_T(25:28,:));
         set(h7,'matrix',FK_T(29:32,:));
         set(h_tool, 'matrix', FK_T(33:36,:));
-        joint_angles = [];
-        joint_angles_group = [];
-        xyz_bxbybz_groups = [];
-        group_idx = [];
-        idx = 1;
-        delete(plot_traj_arr);
-        delete(plot_failed_traj_arr);
+        ClearAllVars();
         prev_traj_status = 'ROBOT CHANGED...';
     end
 else
@@ -136,13 +123,7 @@ else
         set(h6,'matrix',FK_T(25:28,:));
         set(h7,'matrix',FK_T(29:32,:));
         set(h_tool, 'matrix', FK_T(33:36,:));
-        joint_angles = [];
-        joint_angles_group = [];
-        xyz_bxbybz_groups = [];
-        group_idx = [];
-        idx = 1;
-        delete(plot_traj_arr);
-        delete(plot_failed_traj_arr);
+        ClearAllVars();
         prev_traj_status = 'ROBOT CHANGED...';
     end
 end

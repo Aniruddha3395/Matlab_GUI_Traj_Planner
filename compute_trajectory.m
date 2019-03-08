@@ -26,6 +26,7 @@ if traj_successful
     idx_end = idx;
     range = [idx_start,idx_end];
     group_idx = [group_idx;range]; %Append the Group Indices
+    xyz_bxbybz(:,1:3) = xyz_bxbybz(:,1:3).*1000; %converting meters to mm
     xyz_bxbybz_groups = [xyz_bxbybz_groups; xyz_bxbybz]; %Append the grouped xyz_bxbybz
     joint_angles_group = [joint_angles_group;joint_angles];
     idx = idx + 1;

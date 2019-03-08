@@ -7,13 +7,6 @@ global mold_n_transformed;
 global p_mold;
 global mold_v;
 global mold_n;
-global joint_angles;
-global joint_angles_group;
-global xyz_bxbybz_groups;
-global group_idx;
-global plot_traj_arr;
-global idx;
-global plot_failed_traj_arr;
 global rob_T_part;
 global original_rob_T_part;
 global move_part_x;
@@ -39,13 +32,7 @@ rob_T_part = original_rob_T_part;
 delete(p_mold);
 p_mold = patch('Faces',mold_f,'Vertices',mold_v_transformed,'FaceVertexCData',...
     [0.8,0.8,0.8],'FaceColor',[0.3,0.3,0.3],'EdgeColor','none');
-joint_angles = [];
-joint_angles_group = [];
-xyz_bxbybz_groups = [];
-group_idx = [];
-idx = 1;
-delete(plot_traj_arr);
-delete(plot_failed_traj_arr);
+ClearAllVars();
 prev_traj_status = 'MOLD CHANGED...';
 
 end

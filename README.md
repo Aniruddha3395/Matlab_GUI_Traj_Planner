@@ -4,6 +4,7 @@
 * Robot IK is calculated with optimization based approach
 * Any tool can be attached to the robot and IK can be computed wrt TCP
 * Some sample Molds and Tools are added. You can add your custom tools and molds (To add your files, just copy files into CAD_stl folder)
+* **NEW** Added the feature of selecting the trajectory (x,y,z,bx,by,bz) waypoints file and group indices file using which robot trajectory can be calculated. 
 
 **Requirements to run the code**
 * MinGW compiler for MEX if using windows ([Link](https://www.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c-compiler))

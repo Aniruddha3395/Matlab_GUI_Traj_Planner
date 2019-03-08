@@ -23,6 +23,7 @@
 clc;
 clear all;
 close all;
+dbstop if error;
 warning off;
 format short;
 

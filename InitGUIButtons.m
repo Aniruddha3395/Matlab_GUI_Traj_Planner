@@ -24,6 +24,8 @@ global select_tool;
 global repl_path_l;
 global repl_path_r;
 global select_robot;
+global gen_traj_from_file_data;
+global transform_traj_from_file_data;
 
 % Title
 titlebx = uicontrol(fig,'Style','text');
@@ -301,14 +303,14 @@ move_part_Rx.Callback = @TransformMold_Rx;
 
 % Replicate Trajectory Text
 replicate_traj_bx = uicontrol(fig,'Style','text');
-replicate_traj_bx.Position = [60 440 200 30];
+replicate_traj_bx.Position = [60 480 200 30];
 replicate_traj_bx.FontWeight = 'bold';
 replicate_traj_bx.FontSize = 13;
 replicate_traj_bx.String = 'Replicate Trajectory';
 
 % Replicate Trajectory Left Button
 repl_path_l = uicontrol(fig,'Style','pushbutton');
-repl_path_l.Position = [50 400 100 40];
+repl_path_l.Position = [50 440 100 40];
 repl_path_l.String = 'Left';
 repl_path_l.FontWeight = 'bold';
 repl_path_l.BackgroundColor = [0.9,1,0.6];
@@ -318,7 +320,7 @@ repl_path_l.Callback = @(src,event)ReplicateTraj(src,event,1);
 
 % Replicate Trajectory Right Button
 repl_path_r = uicontrol(fig,'Style','pushbutton');
-repl_path_r.Position = [160 400 100 40];
+repl_path_r.Position = [160 440 100 40];
 repl_path_r.String = 'Right';
 repl_path_r.FontWeight = 'bold';
 repl_path_r.BackgroundColor = [0.9,1,0.6];
@@ -328,14 +330,14 @@ repl_path_r.Callback = @(src,event)ReplicateTraj(src,event,0);
 
 % Replica Count Text
 replica_count_bx = uicontrol(fig,'Style','text');
-replica_count_bx.Position = [60 350 100 30];
+replica_count_bx.Position = [60 390 100 30];
 replica_count_bx.FontWeight = 'bold';
 replica_count_bx.FontSize = 12;
 replica_count_bx.String = 'Count';
 
 % Replica Count Button
 replica_count = uicontrol(fig,'Style','edit');
-replica_count.Position = [160 350 100 40];
+replica_count.Position = [160 390 100 40];
 replica_count.FontWeight = 'bold';
 replica_count.BackgroundColor = [1,1,0.9];
 replica_count.ForegroundColor = [0.1,0,0.3];
@@ -344,18 +346,64 @@ replica_count.Callback = @SetReplicaCount;
 
 % Replica Count Text
 replica_off_bx = uicontrol(fig,'Style','text');
-replica_off_bx.Position = [60 290 100 40];
+replica_off_bx.Position = [60 330 100 40];
 replica_off_bx.FontWeight = 'bold';
 replica_off_bx.FontSize = 12;
 replica_off_bx.String = 'Offset';
 
 % Replica Offset Value Button
 replica_off = uicontrol(fig,'Style','edit');
-replica_off.Position = [160 300 100 40];
+replica_off.Position = [160 340 100 40];
 replica_off.FontWeight = 'bold';
 replica_off.BackgroundColor = [1,1,0.9];
 replica_off.ForegroundColor = [0.1,0,0.3];
 replica_off.FontSize = 13;
 replica_off.Callback = @SetReplicaOffset;
+
+% Get trajectory from file Text
+traj_from_file_bx = uicontrol(fig,'Style','text');
+traj_from_file_bx.Position = [40 240 250 30];
+traj_from_file_bx.FontWeight = 'bold';
+traj_from_file_bx.FontSize = 13;
+traj_from_file_bx.String = 'Get Trajectory From File';
+
+% Import xyz_bxbybz from file Button
+import_pts_file = uicontrol(fig,'Style','pushbutton');
+import_pts_file.Position = [55 200 100 40];
+import_pts_file.String = 'Waypoints';
+import_pts_file.FontWeight = 'bold';
+import_pts_file.BackgroundColor = [0.9,1,0.6];
+import_pts_file.ForegroundColor = [0.1,0,0.3];
+import_pts_file.FontSize = 12;
+import_pts_file.Callback = @ImportPtsData;
+
+% Import group idx from file Button
+import_grpId_file = uicontrol(fig,'Style','pushbutton');
+import_grpId_file.Position = [165 200 100 40];
+import_grpId_file.String = 'Group Idx';
+import_grpId_file.FontWeight = 'bold';
+import_grpId_file.BackgroundColor = [0.9,1,0.6];
+import_grpId_file.ForegroundColor = [0.1,0,0.3];
+import_grpId_file.FontSize = 12;
+import_grpId_file.Callback = @ImportIdxData;
+
+% transform imported trajectory from file Button
+transform_traj_from_file_data = uicontrol(fig,'Style','checkbox');
+transform_traj_from_file_data.Position = [60 160 200 40];
+transform_traj_from_file_data.String = 'Apply Transformation';
+transform_traj_from_file_data.FontWeight = 'bold';
+transform_traj_from_file_data.ForegroundColor = [0.1,0,0.3];
+transform_traj_from_file_data.FontSize = 12;
+
+% generate trajectory imported from file Button
+gen_traj_from_file_data = uicontrol(fig,'Style','pushbutton');
+gen_traj_from_file_data.Position = [60 115 200 40];
+gen_traj_from_file_data.String = 'calculate';
+gen_traj_from_file_data.FontWeight = 'bold';
+gen_traj_from_file_data.BackgroundColor = [0.9,1,0.6];
+gen_traj_from_file_data.ForegroundColor = [0.1,0,0.3];
+gen_traj_from_file_data.FontSize = 12;
+gen_traj_from_file_data.Callback = @CalcuateTrajFromFileData;
+gen_traj_from_file_data.Enable = 'off';
 
 end

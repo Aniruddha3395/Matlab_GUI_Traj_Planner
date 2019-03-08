@@ -49,10 +49,10 @@ for new_seed_strt = 1:compute_traj_attempt_lim
         end
         
         if status==1
-            %             fprintf('%d : success\n',target_idx);
+%                         fprintf('%d : success\n',target_idx);
             reach = reach + 1;
         else
-            %             fprintf('%d : failure\n',target_idx);
+%                         fprintf('%d : failure\n',target_idx);
             failed_idx = [failed_idx;target_idx];
             if size(failed_idx,1)>lim_on_failure
                 break;
