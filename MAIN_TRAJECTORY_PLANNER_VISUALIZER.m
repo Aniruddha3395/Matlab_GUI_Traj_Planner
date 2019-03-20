@@ -6,7 +6,7 @@
 % << Trajectory Planner GUI using Optimization based approach >>         %
 % NOTE 1: When running the code from different path...just               %
 % change the folder                                                      %
-% NOTE 2: Whenever new tool is added, add the tool data at               % 
+% NOTE 2: Whenever new tool is added, add the tool data at               %
 % the end of this script                                                 %
 % NOTE 3: To change the initial robot base frame to part frame           %
 % transformation - Change the value of "rob_T_part" in 'robot_to_part.m' %
@@ -27,28 +27,7 @@ dbstop if error;
 warning off;
 format short;
 
-edited_MEX = false;
-
-%% adding woking directory and all dependancies
-[working_dir,~,~] = fileparts(mfilename('fullpath'));
-addpath(genpath(working_dir),'-end');
-
-%% Initializing MEX files for KUKA
-if ~ispc
-cd MEX_files/;
-if exist('bxbybz_to_euler_mex.mexa64','file')==0 || edited_MEX
-    run run_MEX.m;
-end
-if exist('apply_transformation_mex.mexa64','file')==0 || edited_MEX
-    run run_MEX.m;
-end
-if exist('ascent_IK_mex.mexa64','file')==0 || edited_MEX
-    run run_MEX.m
-end
-cd ..;
-end
-
-%% Define gloabl variables and figure settings
+%% Define global variables
 
 set(0, 'DefaultFigureRenderer', 'opengl');
 global roller_width;
@@ -74,15 +53,65 @@ global robot1;
 global tool1;
 global use_cpp_IK_solver;
 
+%<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
+use_cpp_IK_solver = true;
+%<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
+
+edited_MEX = false;
+
+%% adding woking directory and all dependancies
+[working_dir,~,~] = fileparts(mfilename('fullpath'));
+addpath(genpath(working_dir),'-end');
+
+%% Initializing MEX files for KUKA
+if ~ispc
+    cd MEX_files/;
+    if exist('bxbybz_to_euler_mex.mexa64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('apply_transformation_mex.mexa64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('ascent_IK_mex.mexa64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('get_iiwa7_FK_all_joints_mex.mexa64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('get_iiwa7_FK_mex.mexa64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('get_iiwa14_FK_all_joints_mex.mexa64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    cd ..;
+else
+    cd MEX_files/;
+    if exist('bxbybz_to_euler_mex.mexw64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('apply_transformation_mex.mexw64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('get_iiwa7_FK_all_joints_mex.mexw64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('get_iiwa7_FK_mex.mexw64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    if exist('get_iiwa14_FK_all_joints_mex.mexw64','file')==0 || edited_MEX
+        run_MEX(use_cpp_IK_solver);
+    end
+    cd ..; 
+end
+
 roller_width = 24;
 resolution = 3;
 take_video = false;
 show_tool = true;
 kill_sig = false;
 lim_on_failure = 1;
-%<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
-use_cpp_IK_solver = true;       
-%<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
+
 
 %% Load Mold, Tool and relative information
 cd CAD_stl/Molds/;
@@ -119,8 +148,8 @@ end
 [mold_v, mold_f, mold_n, ~] = stlRead(mold_base);
 
 if ~strcmp(store_file_tool_str{1},'NO_TOOL')
-[tool_v, tool_f, tool_n, ~] = stlRead(ee_tool);
-delete(gca);
+    [tool_v, tool_f, tool_n, ~] = stlRead(ee_tool);
+    delete(gca);
 end
 
 close all;
@@ -182,7 +211,7 @@ if strcmp(robot1.rob_type,'iiwa7')
     load STL_iiwa7_DATA_mm.mat;
 else
     load STL_iiwa14_DATA_mm.mat;
-end    
+end
 
 home_pos = [-0.1321;0.1415;0.0895;-1.5916;-0.0033;1.4041;-0.0312];    %some home position
 if strcmp(robot1.rob_type,'iiwa7')
@@ -300,13 +329,13 @@ tool1('Calib_Tool.STL') = t;
 
 % ensuring new tools are added with respective TCP
 for file_idx = 1:size(store_file_tool_str,2)
-try
-     tool1(store_file_tool_str{file_idx});
-catch
-    disp('TCP is not available for the following tool - ');
-    disp(store_file_tool_str{file_idx});
-    return;
-end
+    try
+        tool1(store_file_tool_str{file_idx});
+    catch
+        disp('TCP is not available for the following tool - ');
+        disp(store_file_tool_str{file_idx});
+        return;
+    end
 end
 
 robot1.robot_ree_T_tee = tool1('NO_TOOL');
