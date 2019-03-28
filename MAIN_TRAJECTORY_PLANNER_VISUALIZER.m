@@ -106,7 +106,7 @@ else
 end
 
 roller_width = 24;
-resolution = 3;
+resolution = 10;
 take_video = false;
 show_tool = true;
 kill_sig = false;
