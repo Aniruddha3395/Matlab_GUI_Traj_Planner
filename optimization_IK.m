@@ -42,9 +42,9 @@ for new_seed_strt = 1:compute_traj_attempt_lim
                 tolerances,options, theta_lb, theta_ub );
         else
             if strcmp(robot1.rob_type,'iiwa7')
-                [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,7);
+                [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,7,theta_lb,theta_ub);
             elseif strcmp(robot1.rob_type,'iiwa14')
-                [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,14);
+                [joint_config,status] = ascent_IK_mex(joint_config,xyz_bxbybz(target_idx,:),robot1.robot_ree_T_tee,14,theta_lb,theta_ub);
             end
         end
         

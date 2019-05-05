@@ -31,7 +31,9 @@ namespace opt_obj
     }
 
     // class constructor
-    opt_obj::opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, std::vector<double> _X_init, double OptH, double OptXtolRel, int Rob_version) 
+    opt_obj::opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, 
+        std::vector<double> _X_init, double OptH, double OptXtolRel, int Rob_version,
+        std::vector<double> LBounds, std::vector<double> UBounds) 
     {
         //choose optimizer
         // alg_type = nlopt::LN_NEWUOA;
@@ -63,14 +65,57 @@ namespace opt_obj
         OptVarlb.resize(OptVarDim);
         OptVarub.resize(OptVarDim);
 
-        OptVarlb[0] = -168*3.14159/180; OptVarub[0] = -OptVarlb[0];
-        OptVarlb[1] = -118*3.14159/180; OptVarub[1] = -OptVarlb[1];
-        OptVarlb[2] = -168*3.14159/180; OptVarub[2] = -OptVarlb[2];
-        OptVarlb[3] = -118*3.14159/180; OptVarub[3] = -OptVarlb[3];
-        OptVarlb[4] = -168*3.14159/180; OptVarub[4] = -OptVarlb[4];
-        OptVarlb[5] = -118*3.14159/180; OptVarub[5] = -OptVarlb[5];
-        OptVarlb[6] = -173*3.14159/180; OptVarub[6] = -OptVarlb[6];
-
+        if (LBounds[0]<-2.9321506) {
+            LBounds[0] = -2.9321506;
+        }
+        if (UBounds[0]>2.9321506) {
+            UBounds[0] = 2.9321506;
+        }
+        if (LBounds[1]<-2.0594867) {
+            LBounds[1] = -2.0594867;
+        }
+        if (UBounds[1]>2.0594867) {
+            UBounds[1] = 2.0594867;
+        }
+        if (LBounds[2]<-2.9321506) {
+            LBounds[2] = -2.9321506;
+        }
+        if (UBounds[2]>2.9321506) {
+            UBounds[2] = 2.9321506;
+        }
+        if (LBounds[3]<-2.0594867) {
+            LBounds[3] = -2.0594867;
+        }
+        if (UBounds[3]>2.0594867) {
+            UBounds[3] = 2.0594867;
+        }
+        if (LBounds[4]<-2.9321506) {
+            LBounds[4] = -2.9321506;
+        }
+        if (UBounds[4]>2.9321506) {
+            UBounds[4] = 2.9321506;
+        }
+        if (LBounds[5]<-2.0594867) {
+            LBounds[5] = -2.0594867;
+        }
+        if (UBounds[5]>2.0594867) {
+            UBounds[5] = 2.0594867;
+        }
+        if (LBounds[6]<-3.0194170) {
+            LBounds[6] = -3.0194170;
+        }
+        if (UBounds[6]>3.0194170) {
+            UBounds[6] = 3.0194170;
+        }
+        
+        
+        OptVarlb[0] = LBounds[0]; OptVarub[0] = UBounds[0];
+        OptVarlb[1] = LBounds[1]; OptVarub[1] = UBounds[1];
+        OptVarlb[2] = LBounds[2]; OptVarub[2] = UBounds[2];
+        OptVarlb[3] = LBounds[3]; OptVarub[3] = UBounds[3];
+        OptVarlb[4] = LBounds[4]; OptVarub[4] = UBounds[4];
+        OptVarlb[5] = LBounds[5]; OptVarub[5] = UBounds[5];
+        OptVarlb[6] = LBounds[6]; OptVarub[6] = UBounds[6];
         opt.set_xtol_rel(optXtolRel);
         opt.set_min_objective(customminfunc, this);
         opt.add_inequality_constraint(customconfunc, this, 1e-8);

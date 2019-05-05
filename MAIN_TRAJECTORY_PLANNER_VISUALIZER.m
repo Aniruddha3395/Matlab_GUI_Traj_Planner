@@ -58,6 +58,7 @@ use_cpp_IK_solver = true;
 %<<<<<<<<<<<<<<<<<<<<<<<.>>>>>>>>>>>>>>>>>>>>>>>>>%
 
 edited_MEX = false;
+% edited_MEX = true;
 
 %% adding woking directory and all dependancies
 [working_dir,~,~] = fileparts(mfilename('fullpath'));

@@ -7,7 +7,7 @@
 
 class iiwa
 {
-	public:
+public:
 	static Eigen::MatrixXd compute_iiwa7_FK(Eigen::MatrixXd, Eigen::MatrixXd);
 	static Eigen::MatrixXd compute_iiwa7_FK(std::vector<double>, Eigen::MatrixXd);
 	static Eigen::MatrixXd compute_iiwa7_FK_all(Eigen::MatrixXd, Eigen::MatrixXd);

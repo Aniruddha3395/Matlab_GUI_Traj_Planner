@@ -13,7 +13,10 @@ namespace opt_obj
 
         public:
             // constructor and distructor
-            opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, std::vector<double> _X_init, double OptH, double OptXtolRel, int Rob_version);
+            opt_obj(Eigen::MatrixXd Theta, Eigen::MatrixXd Point, Eigen::MatrixXd Robot_ree_T_tee, 
+                std::vector<double> _X_init, double OptH, double OptXtolRel, int Rob_version,
+                std::vector<double> LBounds= {-2.9321506,-2.0594867,-2.9321506,-2.0594867,-2.9321506,-2.0594867,-3.0194170},
+                std::vector<double> UBounds= {2.9321506,2.0594867,2.9321506,2.0594867,2.9321506,2.0594867,3.0194170});
 
             ~opt_obj();
 

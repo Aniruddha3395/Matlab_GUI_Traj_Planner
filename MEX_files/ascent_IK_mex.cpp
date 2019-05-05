@@ -23,6 +23,9 @@ void mexFunction (int _no_op_args, mxArray *mex_op[], int _no_ip_args, const mxA
     Eigen::Map<Eigen::ArrayXXd,Eigen::Aligned> robot_ree_T_tee (mxGetPr(mex_in[2]),4,4);
     ptr_rob_version = mxGetDoubles(mex_in[3]);
     int rob_version = (int) *ptr_rob_version;
+    Eigen::Map<Eigen::ArrayXXd,Eigen::Aligned> lb (mxGetPr(mex_in[4]),7,1);
+    Eigen::Map<Eigen::ArrayXXd,Eigen::Aligned> ub (mxGetPr(mex_in[5]),7,1);
+    
 
     /////////////////// CREATING OPTIMIZATION OBJECT //////////////////
 
@@ -31,8 +34,10 @@ void mexFunction (int _no_op_args, mxArray *mex_op[], int _no_ip_args, const mxA
     
     // std::vector<double> X_init{0.31189,0.2209,-0.1785,-1.5357,0.0176,1.3463,0};
     std::vector<double> X_init{joint_config(0,0),joint_config(1,0),joint_config(2,0),joint_config(3,0),joint_config(4,0),joint_config(5,0),joint_config(6,0)};
+    std::vector<double> LBounds{lb(0,0),lb(1,0),lb(2,0),lb(3,0),lb(4,0),lb(5,0),lb(6,0)};
+    std::vector<double> UBounds{ub(0,0),ub(1,0),ub(2,0),ub(3,0),ub(4,0),ub(5,0),ub(6,0)};
 
-    opt_obj::opt_obj OptObj(joint_config, xyz_bxbybz_T, robot_ree_T_tee, X_init, OptH, OptXtolRel, rob_version);
+    opt_obj::opt_obj OptObj(joint_config, xyz_bxbybz_T, robot_ree_T_tee, X_init, OptH, OptXtolRel, rob_version, LBounds, UBounds);
     Eigen::MatrixXd M = OptObj.ascent_IK();
 
     /////////////////// OUTPUT ///////////////////////////////////
